@@ -95,6 +95,7 @@ def main():
     
     # brightness and contrast
     # Ref: https://docs.opencv.org/3.4/d3/dc1/tutorial_basic_linear_transform.html
+    # cv2.convertScaleAbs is more faster
     crop_png_with_brightness = cv2.convertScaleAbs(crop_png, alpha=alpha, beta=beta)
     #crop_png_with_brightness = np.zeros(crop_png.shape, crop_png.dtype)
     #for y in range(crop_png.shape[0]):
@@ -108,9 +109,11 @@ def main():
     output = np.zeros(crop_img.shape, crop_img.dtype)
     # merge two images with alpha channel
     # Ref: https://stackoverflow.com/questions/41508458/python-opencv-overlay-an-image-with-transparency
-    output[:, :, 0] = (1.0 - np_alpha) * crop_png[:, :, 0] + np_alpha * crop_png_with_brightness[:, :, 0]
-    output[:, :, 1] = (1.0 - np_alpha) * crop_png[:, :, 1] + np_alpha * crop_png_with_brightness[:, :, 1]
-    output[:, :, 2] = (1.0 - np_alpha) * crop_png[:, :, 2] + np_alpha * crop_png_with_brightness[:, :, 2]
+    #output[:, :, 0] = (1.0 - np_alpha) * crop_png[:, :, 0] + np_alpha * crop_png_with_brightness[:, :, 0]
+    #output[:, :, 1] = (1.0 - np_alpha) * crop_png[:, :, 1] + np_alpha * crop_png_with_brightness[:, :, 1]
+    #output[:, :, 2] = (1.0 - np_alpha) * crop_png[:, :, 2] + np_alpha * crop_png_with_brightness[:, :, 2]
+    np_alpha = np_alpha.reshape(crop_img.shape[0], crop_img.shape[1], 1)
+    output[:, :, :] = (1.0 - np_alpha) * crop_png[:, :, :3] + np_alpha * crop_png_with_brightness[:, :, :3]
     io.imsave("output.jpg", output)
 
     #crop_png = cv2.add(src_png, crop_png_with_brightness)
