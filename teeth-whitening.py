@@ -7,6 +7,7 @@
 #
 
 import sys
+import argparse
 import cv2
 import dlib
 import numpy as np
@@ -16,12 +17,21 @@ from PIL import Image
 
 # brightness and contrast
 # https://stackoverflow.com/questions/39308030/how-do-i-increase-the-contrast-of-an-image-in-python-opencv/50053219#50053219
-alpha = 1.0 # 1.0-3.0
-beta = 50  # 0-100
 
 predictor_path = "./data/shape_predictor_68_face_landmarks.dat"
 CONST_IMAGE_PATH = "./faces/Tom_Cruise_avp_2014_4.jpg"
 # CONST_IMAGE_PATH = "./faces/ko_p.jpg"
+
+parser = argparse.ArgumentParser(description='teeth whitening editor')
+parser.add_argument('file', help='image file')
+parser.add_argument('-a', metavar='alpha', default='1.0', type=float, help='alpha value')
+parser.add_argument('-b', metavar='beta', default='50', type=int, help='beta value')
+args = parser.parse_args()
+
+alpha = args.a
+beta = args.b
+#alpha = 1.0 # 1.0-3.0
+#beta = 50  # 0-100
 
 detector = dlib.get_frontal_face_detector()
 predictor = dlib.shape_predictor(predictor_path)
