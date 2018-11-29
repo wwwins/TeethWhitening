@@ -24,8 +24,8 @@ CONST_IMAGE_PATH = "./faces/Tom_Cruise_avp_2014_4.jpg"
 
 parser = argparse.ArgumentParser(description='teeth whitening editor')
 parser.add_argument('file', help='image file')
-parser.add_argument('-a', metavar='alpha', default='1.0', type=float, help='alpha value')
-parser.add_argument('-b', metavar='beta', default='50', type=int, help='beta value')
+parser.add_argument('-a', metavar='alpha', default='1.0', type=float, help='alpha value range: 1.0-3.0')
+parser.add_argument('-b', metavar='beta', default='50', type=int, help='beta value range: 0-100')
 args = parser.parse_args()
 
 alpha = args.a
