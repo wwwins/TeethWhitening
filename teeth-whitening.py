@@ -39,7 +39,7 @@ detector = dlib.get_frontal_face_detector()
 predictor = dlib.shape_predictor(predictor_path)
 
 # compute the mouth aspect ratio
-# open mouth: mar > 0.60
+# opening mouth: mar > 0.30
 def mouth_aspect_ratio(mouth):
     D = distance.euclidean(mouth[33], mouth[51])
     # D1 = distance.euclidean(mouth[50], mouth[58])
