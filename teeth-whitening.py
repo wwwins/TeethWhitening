@@ -13,7 +13,9 @@ import dlib
 import numpy as np
 from skimage import io
 from PIL import Image
+from scipy.spatial import distance
 
+MAR = 0.30
 
 # brightness and contrast
 # https://stackoverflow.com/questions/39308030/how-do-i-increase-the-contrast-of-an-image-in-python-opencv/50053219#50053219
@@ -36,6 +38,20 @@ beta = args.b
 detector = dlib.get_frontal_face_detector()
 predictor = dlib.shape_predictor(predictor_path)
 
+# compute the mouth aspect ratio
+# open mouth: mar > 0.60
+def mouth_aspect_ratio(mouth):
+    D = distance.euclidean(mouth[33], mouth[51])
+    # D1 = distance.euclidean(mouth[50], mouth[58])
+    # D2 = distance.euclidean(mouth[51], mouth[57])
+    # D3 = distance.euclidean(mouth[52], mouth[56])
+    D1 = distance.euclidean(mouth[61], mouth[67])
+    D2 = distance.euclidean(mouth[62], mouth[66])
+    D3 = distance.euclidean(mouth[63], mouth[65])
+    mar = (D1+D2+D3)/(3*D)
+    print("mar:", mar)
+    return mar;
+    
 def alphaBlend(img1, img2, mask):
     """ alphaBlend img1 and img 2 (of CV_8UC3) with mask (CV_8UC1 or CV_8UC3)
     """
@@ -57,7 +73,7 @@ def shape2np(s):
 
 def main():
     img = io.imread(image_path)
-    faces = detector(img)
+    faces = detector(img, 1)
 
     if len(faces)==0:
         print("Face not found")
@@ -67,6 +83,11 @@ def main():
         shape = predictor(img, d)
     
     np_points = shape2np(shape)
+
+    # detect an open mouth
+    if (mouth_aspect_ratio(np_points)<MAR):
+        print("Mouth not open")
+        return
 
     # facial points
     # https://ibug.doc.ic.ac.uk/resources/facial-point-annotations/
