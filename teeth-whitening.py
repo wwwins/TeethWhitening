@@ -153,6 +153,11 @@ def main():
     #crop_png = cv2.add(src_png, crop_png_with_brightness)
     # cv2.imwrite("output.jpg", output)
 
+    # save before and after images
+    io.imsave("before.jpg", img)
+    img[d.top():d.bottom(),d.left():d.right()] = output
+    io.imsave("after.jpg", img)
+
 if __name__ == "__main__":
     global image_path
     if (len(sys.argv)>1):
