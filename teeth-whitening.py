@@ -20,11 +20,12 @@ MAR = 0.30
 # brightness and contrast
 # https://stackoverflow.com/questions/39308030/how-do-i-increase-the-contrast-of-an-image-in-python-opencv/50053219#50053219
 
-predictor_path = "./data/shape_predictor_68_face_landmarks.dat"
+#CONST_PREDICTOR_PATH = "./data/shape_predictor_68_face_landmarks.dat"
 CONST_IMAGE_PATH = "./faces/Tom_Cruise_avp_2014_4.jpg"
 # CONST_IMAGE_PATH = "./faces/ko_p.jpg"
 
 parser = argparse.ArgumentParser(description='teeth whitening editor')
+parser.add_argument('predictor_path', help='predictor file')
 parser.add_argument('file', help='image file')
 parser.add_argument('-a', metavar='alpha', default='1.0', type=float, help='alpha value range: 1.0-3.0')
 parser.add_argument('-b', metavar='beta', default='50', type=int, help='beta value range: 0-100')
@@ -34,6 +35,8 @@ alpha = args.a
 beta = args.b
 #alpha = 1.0 # 1.0-3.0
 #beta = 50  # 0-100
+
+predictor_path = args.predictor_path
 
 detector = dlib.get_frontal_face_detector()
 predictor = dlib.shape_predictor(predictor_path)
@@ -153,7 +156,7 @@ def main():
 if __name__ == "__main__":
     global image_path
     if (len(sys.argv)>1):
-        image_path = sys.argv[1]
+        image_path = sys.argv[2]
     else:
         image_path = CONST_IMAGE_PATH
     main()
