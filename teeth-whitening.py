@@ -53,7 +53,7 @@ def mouth_aspect_ratio(mouth):
     D2 = distance.euclidean(mouth[62], mouth[66])
     D3 = distance.euclidean(mouth[63], mouth[65])
     mar = (D1+D2+D3)/(3*D)
-    print("mar:", mar)
+    print("mar={}".format(mar))
     return mar;
     
 def alphaBlend(img1, img2, mask):
