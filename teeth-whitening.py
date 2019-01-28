@@ -87,11 +87,15 @@ def main():
 
     if len(faces)==0:
         print("Face not found")
-        return;
+        return
 
     for f, d in enumerate(faces):
         shape = predictor(img, d)
     
+    if (d.bottom()-d.top())*(d.right()-d.left()) < 10000:
+        print("Face too small")
+        return
+
     np_points = shape2np(shape)
 
     # detect an open mouth
