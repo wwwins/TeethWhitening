@@ -6,6 +6,7 @@
 #       python teeth-whitening.py pic.jpg
 #
 
+import os
 import sys
 import argparse
 import cv2
@@ -75,6 +76,12 @@ def shape2np(s):
     return np_points
 
 def main():
+    filename = os.path.basename(image_path)
+    publicname = os.path.dirname(image_path)[:-6]
+    dirname = os.path.join(publicname, 'result', filename)
+    if not os.path.exists(dirname):
+        os.makedirs(dirname)
+
     img = io.imread(image_path)
     faces = detector(img, 1)
 
@@ -97,12 +104,12 @@ def main():
 
     # crop face
     crop_img = img[d.top():d.bottom(),d.left():d.right()]
-    io.imsave("face.jpg", crop_img)
+    io.imsave(dirname+"/face.jpg", crop_img)
     
     # crop mouth
     mouth_max_point = np.max(np_points[60:], axis=0)
     mouth_min_point = np.min(np_points[60:], axis=0)
-    io.imsave("mouth.jpg", img[mouth_min_point[1]:mouth_max_point[1], mouth_min_point[0]:mouth_max_point[0]])
+    io.imsave(dirname+"/mouth.jpg", img[mouth_min_point[1]:mouth_max_point[1], mouth_min_point[0]:mouth_max_point[0]])
 
     # mouth: 48-67
     # teeth: 60-67
@@ -115,12 +122,12 @@ def main():
 
     # create teeth mask
     cv2.fillConvexPoly(mask, np_points[60:]-(d.left(), d.top()), 1)
-    cv2.imwrite("mask.jpg", mask)
+    cv2.imwrite(dirname+"/mask.jpg", mask)
     crop_jpg_with_mask= cv2.bitwise_and(crop_img, crop_img, mask = mask)
 
     # smoothing mask
     blur_mask = cv2.GaussianBlur(crop_jpg_with_mask,(21,21), 11.0)
-    io.imsave('blur_mask.jpg', blur_mask)
+    io.imsave(dirname+'/blur_mask.jpg', blur_mask)
     
     # convert rgb2rgba
     crop_png = cv2.cvtColor(crop_img, cv2.COLOR_RGB2RGBA)
@@ -138,7 +145,7 @@ def main():
     #        if (c!=0):
     #            crop_png_with_brightness[y,x] = np.clip(alpha*crop_png[y,x] + beta, 0, 255)
 
-    io.imsave("brightness.png", crop_png_with_brightness)
+    io.imsave(dirname+"/brightness.png", crop_png_with_brightness)
     # output
     output = np.zeros(crop_img.shape, crop_img.dtype)
     # merge two images with alpha channel
@@ -148,15 +155,15 @@ def main():
     #output[:, :, 2] = (1.0 - np_alpha) * crop_png[:, :, 2] + np_alpha * crop_png_with_brightness[:, :, 2]
     np_alpha = np_alpha.reshape(crop_img.shape[0], crop_img.shape[1], 1)
     output[:, :, :] = (1.0 - np_alpha) * crop_png[:, :, :3] + np_alpha * crop_png_with_brightness[:, :, :3]
-    io.imsave("output.jpg", output)
+    io.imsave(dirname+"/output.jpg", output)
 
     #crop_png = cv2.add(src_png, crop_png_with_brightness)
     # cv2.imwrite("output.jpg", output)
 
     # save before and after images
-    io.imsave("before.jpg", img)
+    io.imsave(dirname+"/before.jpg", img)
     img[d.top():d.bottom(),d.left():d.right()] = output
-    io.imsave("after.jpg", img)
+    io.imsave(dirname+"/after.jpg", img)
 
 if __name__ == "__main__":
     global image_path
