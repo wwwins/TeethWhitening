@@ -79,7 +79,6 @@ def shape2np(s):
     return np_points
 
 def main():
-    whitening = 1
     filename = os.path.basename(image_path)
     publicname = os.path.dirname(image_path)[:-6]
     dirname = os.path.join(publicname, 'result', filename)
@@ -87,6 +86,9 @@ def main():
         os.makedirs(dirname)
 
     img = io.imread(image_path)
+    h,w,c = img.shape
+    if c == 4:
+        img = img[:,:,:3]
     io.imsave(dirname+"/before.jpg", img)
     res = IsobarImg.denoiseImage(dirname+"/before.jpg")
     res.save(dirname+"/after.jpg")
