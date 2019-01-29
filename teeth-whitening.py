@@ -15,8 +15,11 @@ import numpy as np
 from skimage import io
 from PIL import Image
 from scipy.spatial import distance
+import IsobarImg
 
 MAR = 0.30
+# 100*100
+FACE_IMAGE_SIZE = 10000
 
 # brightness and contrast
 # https://stackoverflow.com/questions/39308030/how-do-i-increase-the-contrast-of-an-image-in-python-opencv/50053219#50053219
@@ -76,6 +79,7 @@ def shape2np(s):
     return np_points
 
 def main():
+    whitening = 1
     filename = os.path.basename(image_path)
     publicname = os.path.dirname(image_path)[:-6]
     dirname = os.path.join(publicname, 'result', filename)
@@ -83,6 +87,10 @@ def main():
         os.makedirs(dirname)
 
     img = io.imread(image_path)
+    io.imsave(dirname+"/before.jpg", img)
+    res = IsobarImg.denoiseImage(dirname+"/before.jpg")
+    res.save(dirname+"/after.jpg")
+
     faces = detector(img, 1)
 
     if len(faces)==0:
@@ -92,7 +100,7 @@ def main():
     for f, d in enumerate(faces):
         shape = predictor(img, d)
     
-    if (d.bottom()-d.top())*(d.right()-d.left()) < 10000:
+    if (d.bottom()-d.top())*(d.right()-d.left()) < FACE_IMAGE_SIZE:
         print("Face too small")
         return
 
@@ -108,6 +116,8 @@ def main():
 
     # crop face
     crop_img = img[d.top():d.bottom(),d.left():d.right()]
+    if crop_img.size == 0:
+        return
     io.imsave(dirname+"/face.jpg", crop_img)
     
     # crop mouth
@@ -165,9 +175,11 @@ def main():
     # cv2.imwrite("output.jpg", output)
 
     # save before and after images
-    io.imsave(dirname+"/before.jpg", img)
+    # io.imsave(dirname+"/before.jpg", img)
     img[d.top():d.bottom(),d.left():d.right()] = output
-    io.imsave(dirname+"/after.jpg", img)
+    io.imsave(dirname+"/whitening.jpg", img)
+    res = IsobarImg.denoiseImage(dirname+"/whitening.jpg")
+    res.save(dirname+"/after.jpg")
 
 if __name__ == "__main__":
     global image_path
