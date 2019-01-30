@@ -99,11 +99,21 @@ def main():
         print("Face not found")
         return
 
+    max_face = 0
+    max_face_id = 0
     for f, d in enumerate(faces):
-        shape = predictor(img, d)
+        face_box = (d.bottom()-d.top())*(d.right()-d.left())
+        if face_box > max_face:
+            max_face = face_box
+            max_face_id = f
+    
+    for f, d in enumerate(faces):
+        if f == max_face_id:
+            shape = predictor(img, d)
+            break
     
     if (d.bottom()-d.top())*(d.right()-d.left()) < FACE_IMAGE_SIZE:
-        print("Face too small")
+        print("Face too small:{}".format(max_face))
         return
 
     np_points = shape2np(shape)
