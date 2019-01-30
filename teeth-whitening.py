@@ -90,7 +90,7 @@ def main():
     if c == 4:
         img = img[:,:,:3]
     io.imsave(dirname+"/before.jpg", img)
-    res = IsobarImg.denoiseImage(dirname+"/before.jpg")
+    res = IsobarImg.beautifyImage(dirname+"/before.jpg")
     res.save(dirname+"/after.jpg")
 
     faces = detector(img, 1)
@@ -190,7 +190,7 @@ def main():
     # io.imsave(dirname+"/before.jpg", img)
     img[d.top():d.bottom(),d.left():d.right()] = output
     io.imsave(dirname+"/whitening.jpg", img)
-    res = IsobarImg.denoiseImage(dirname+"/whitening.jpg")
+    res = IsobarImg.beautifyImage(dirname+"/whitening.jpg")
     res.save(dirname+"/after.jpg")
 
 if __name__ == "__main__":
