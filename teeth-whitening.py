@@ -31,7 +31,7 @@ CONST_IMAGE_PATH = "./faces/Tom_Cruise_avp_2014_4.jpg"
 parser = argparse.ArgumentParser(description='teeth whitening editor')
 parser.add_argument('predictor_path', help='predictor file')
 parser.add_argument('file', help='image file')
-parser.add_argument('-a', metavar='alpha', default='1.0', type=float, help='alpha value range: 1.0-3.0')
+parser.add_argument('-a', metavar='alpha', default='2.0', type=float, help='alpha value range: 1.0-3.0')
 parser.add_argument('-b', metavar='beta', default='50', type=int, help='beta value range: 0-100')
 args = parser.parse_args()
 
@@ -147,7 +147,7 @@ def main():
     # im.save("blank.jpg", im)
 
     # create teeth mask
-    cv2.fillConvexPoly(mask, np_points[60:]-(d.left(), d.top()), 1)
+    cv2.fillConvexPoly(mask, np.int32(np_points[60:]-(d.left(), d.top())), 1)
     cv2.imwrite(dirname+"/mask.jpg", mask)
     crop_jpg_with_mask= cv2.bitwise_and(crop_img, crop_img, mask = mask)
 
